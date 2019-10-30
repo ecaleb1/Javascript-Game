@@ -24,10 +24,11 @@ var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
 
-
+//The following two lines listen for a key press
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+//If a key is pressed, the function keyDownHandler will find which key was pressed and define it as pressed.
 function keyDownHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
         rightPressed = true;
@@ -42,7 +43,7 @@ function keyDownHandler(e) {
 		downPressed = true;
 	}
 } 
-
+//The function keyUpHandler will define the key as unpressed, when the key is no longer pressed.
 function keyUpHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
         rightPressed = false;
@@ -57,7 +58,7 @@ function keyUpHandler(e) {
 		downPressed = false;
 	} 
 }
-
+//The following function draws the character.
 function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
@@ -66,7 +67,7 @@ function drawPaddle() {
   ctx.closePath();
 }
 
-
+//The draw function places the character and platforms on the canvas, and causes the character to move, when a key is pressed.
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawPaddle();
