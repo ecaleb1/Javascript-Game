@@ -7,8 +7,13 @@
 </head>
 
 <body>
+	<!--The h1 tag creates the text for my debug function-->
+	<body onload="debug()">
+	<h1>"The value for variable is: " <span id="myText"></span></h1>
+    </body>
+	<!--The Canvas tag creates the "screen" for the game-->
 	<canvas id="myCanvas" width="480" height="320"></canvas>
-	<script>
+	<script>		
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var x = canvas.width / 2;
@@ -23,12 +28,21 @@ var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
+//stage1 indexes: [0]=X [1]=Y [2]=Width [3]=Height
+var stage1 = [0, 270, 430, 50];
+var rightCollide = true;
+var leftCollide = true;
+var downCollide = true;
+var upCollide = true;
 
-//The following two lines listen for a key press
+//The following two lines listen to see if you have pressed a key.
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-
-//If a key is pressed, the function keyDownHandler will find which key was pressed and define it as pressed.
+//The debug function displays the value of a variable as text while I test my game. This makes it easier to find the cause of bugs.
+function debug() {
+      document.getElementById("myText").innerHTML = downCollide;
+    }
+//If a key is pressed, the function keyDownHandler will find which key was pressed.
 function keyDownHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
         rightPressed = true;
@@ -42,7 +56,7 @@ function keyDownHandler(e) {
 	else if (e.key === "Down" || e.key === "ArrowDown") {
 		downPressed = true;
 	}
-} 
+}
 //The function keyUpHandler will define the key as unpressed, when the key is no longer pressed.
 function keyUpHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
@@ -58,7 +72,7 @@ function keyUpHandler(e) {
 		downPressed = false;
 	} 
 }
-//The following function draws the character.
+//The following function defines the character.
 function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
@@ -66,30 +80,85 @@ function drawPaddle() {
   ctx.fill();
   ctx.closePath();
 }
-
-//The draw function places the character and platforms on the canvas, and causes the character to move, when a key is pressed.
+//The following function defines the platforms.
+function drawPlatforms() { 
+  ctx.beginPath();
+  ctx.rect(stage1[0], stage1[1], stage1[2], stage1[3]);
+  ctx.fillStyle = "#159838";
+  ctx.fill();
+  ctx.closePath();
+}
+//This function causes the player to collide with the sides of the canvas.
+function collision() {
+	if (paddleX < canvas.width - paddleWidth) {
+		rightCollide = false;
+	}
+	
+	else {
+		rightCollide = true;
+	}
+	
+	if (paddleX > 0) {
+		leftCollide = false;
+	}
+	
+	else {
+		leftCollide = true;
+	}
+	
+	if (paddleY > 0) {
+		upCollide = false;
+	}
+	
+	else {
+		upCollide = true;
+	}
+	
+	if (paddleY < canvas.height - paddleHeight) {
+		downCollide = false;
+	}
+	else if(paddleY < stage1[1] - paddleHeight) {
+		downCollide = false;
+	}
+	
+	else {
+		downCollide = true;
+	}
+}
+//This function causes the player to collide with platforms.
+function platformCollision() {
+	if(paddleY < stage1[1] - paddleHeight - 1 || paddleX > stage1[2]) {
+		return;
+	}
+	else {
+		downCollide = true;
+	}
+}
+//The draw function places the character and platforms on the canvas, and causes the character to move, when a key is pressed.		
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPlatforms();
   drawPaddle();
 
-
-  if(rightPressed && paddleX < canvas.width-paddleWidth) {
+  if(rightPressed && rightCollide === false) {
     paddleX += 7;
   }
-  else if(leftPressed && paddleX > 0) {
+  else if(leftPressed && leftCollide === false) {
     paddleX -= 7;
   }
-  if(upPressed && paddleY > 0) {
+  if(upPressed && upCollide === false) {
 	paddleY -= 12;
   }
-  else if(downPressed && paddleY < canvas.height-paddleHeight) {
+  else if(downPressed && downCollide === false) {
 	paddleY += 7;
   }
-	
-  if(paddleY < canvas.height-paddleHeight) {
+  if(downCollide === false) {
 	  paddleY += 5;
   }
-	
+  
+  debug();
+  collision();
+  platformCollision();
   x += dx;
   y += dy;
   requestAnimationFrame(draw);
