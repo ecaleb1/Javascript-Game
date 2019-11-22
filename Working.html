@@ -5,15 +5,14 @@
 <title>Untitled Document</title>
 <style> canvas { background: #eee; display: block; margin: 0 auto; } </style>
 </head>
-
 <body>
-	<!--The h1 tag creates the text for my debug function-->
-	<body onload="debug()">
-	<h1>"The value for variable is: " <span id="myText"></span></h1>
+    <!--The h1 tag creates the text for my debug function-->
+    <body onload="debug()">
+    <h1>"The value for variable is: " <span id="myText"></span></h1>
     </body>
-	<!--The Canvas tag creates the "screen" for the game-->
-	<canvas id="myCanvas" width="480" height="320"></canvas>
-	<script>		
+    <!--The Canvas tag creates the "screen" for the game-->
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+    <script>
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var x = canvas.width / 2;
@@ -28,19 +27,29 @@ var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
-//stage1 indexes: [0]=X [1]=Y [2]=Width [3]=Height
-var stage1 = [0, 270, 430, 50];
 var rightCollide = true;
 var leftCollide = true;
 var downCollide = true;
 var upCollide = true;
+var Xmax = 200;
+var Xmin = -200;
+var Ymax = 200;
+var Ymin = -200;
+var cameraX = 0;
+var cameraY = 0;
+var platYadjust = 0;
+var platXadjust = 0;
+//stage indexes: [0]=X [1]=Y [2]=Width [3]=Height
+//var stages = [[0, 270, 500, 10], [0, 200, 500, 10]]
+var stage1 = [0, 270, 500, 10];
+var stage2 = [0, 200, 500, 10];
 
 //The following two lines listen to see if you have pressed a key.
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 //The debug function displays the value of a variable as text while I test my game. This makes it easier to find the cause of bugs.
 function debug() {
-      document.getElementById("myText").innerHTML = downCollide;
+      document.getElementById("myText").innerHTML = cameraY;
     }
 //If a key is pressed, the function keyDownHandler will find which key was pressed.
 function keyDownHandler(e) {
@@ -81,7 +90,7 @@ function drawPaddle() {
   ctx.closePath();
 }
 //The following function defines the platforms.
-function drawPlatforms() { 
+function drawPlatforms() {
   ctx.beginPath();
   ctx.rect(stage1[0], stage1[1], stage1[2], stage1[3]);
   ctx.fillStyle = "#159838";
@@ -127,44 +136,79 @@ function collision() {
 }
 //This function causes the player to collide with platforms.
 function platformCollision() {
-	if(paddleY < stage1[1] - paddleHeight - 1 || paddleX > stage1[2]) {
-		return;
+    if(paddleY < stage1[1] - paddleHeight - 1 || paddleX > stage1[2]) {
+        return;
+    }
+    else {
+        downCollide = true;
+    }
+}
+
+function camera() {
+    if(cameraX > Xmax) {
+		rightCollide = true;
+    }
+	if(cameraX < Xmin) {
+		leftCollide = true;
 	}
-	else {
+	if(cameraY > Ymax) {
 		downCollide = true;
 	}
+	if(cameraY < Ymin) {
+		upCollide = true;
+	}
+	stage1[1] = platYadjust + 270;
+	stage1[0] = platXadjust;
 }
-//The draw function places the character and platforms on the canvas, and causes the character to move, when a key is pressed.		
+
+//The draw function places the character and platforms on the canvas, and causes the character to move, when a key is pressed.
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawPlatforms();
   drawPaddle();
 
   if(rightPressed && rightCollide === false) {
-    paddleX += 7;
+	  platXadjust -= 7;
+	  //stage1[0] -= 7;
+	  cameraX += 7;
+      //paddleX += 7;
   }
   else if(leftPressed && leftCollide === false) {
-    paddleX -= 7;
+	  platXadjust += 7;
+      //stage1[0] += 7;
+	  cameraX -= 7;
+	  //paddleX -= 7;
   }
   if(upPressed && upCollide === false) {
-	paddleY -= 12;
+	  platYadjust += 12;
+	  //stage1[1] += 12;
+	  cameraY -= 12;
+	  //paddleY -= 12;
   }
   else if(downPressed && downCollide === false) {
-	paddleY += 7;
+	  platYadjust -= 7;
+      //stage1[1] -= 7;
+	  cameraY += 7;
+	  //paddleY += 7;
   }
   if(downCollide === false) {
-	  paddleY += 5;
+	  platYadjust -= 5;
+      //stage1[1] -= 5;
+	  cameraY += 5;
+	  //paddleY += 5;
   }
-  
+
+  camera();
   debug();
   collision();
   platformCollision();
+  camera();
   x += dx;
   y += dy;
   requestAnimationFrame(draw);
 }
 
 draw();
-</script>
+   </script>
 </body>
 </html>
