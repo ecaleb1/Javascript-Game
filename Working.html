@@ -37,7 +37,6 @@ var platYadjust = 0;
 var platXadjust = 0;
 //stage indexes: [0]=X [1]=Y [2]=Width [3]=Height
 var stage1 = [0, 270, 500, 10];
-var stage2 = [0, 200, 500, 10];
 
 //The following two lines listen to see if you have pressed a key.
 document.addEventListener("keydown", keyDownHandler, false);
@@ -164,24 +163,24 @@ function draw() {
   drawPaddle();
 
   if(rightPressed && rightCollide === false) {
-	  platXadjust -= 7;
-	  cameraX += 7;
+      platXadjust -= 7;
+      cameraX += 7;
   }
   else if(leftPressed && leftCollide === false) {
-	  platXadjust += 7;
-	  cameraX -= 7;
+      platXadjust += 7;
+      cameraX -= 7;
   }
   if(upPressed && upCollide === false) {
-	  platYadjust += 12;
-	  cameraY -= 12;
+      platYadjust += 12;
+      cameraY -= 12;
   }
   else if(downPressed && downCollide === false) {
-	  platYadjust -= 7;
-	  cameraY += 7;
+      platYadjust -= 7;
+      cameraY += 7;
   }
   if(downCollide === false) {
-	  platYadjust -= 5;
-	  cameraY += 5;
+      platYadjust -= 5;
+      cameraY += 5;
   }
 
   camera();
