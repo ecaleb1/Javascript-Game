@@ -15,10 +15,6 @@
     <script>
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-var x = canvas.width / 2;
-var y = canvas.height - 30;
-var dx = 2;
-var dy = -2;
 var paddleHeight = 20;
 var paddleWidth = 20;
 var paddleX = (canvas.width - paddleWidth) / 2;
@@ -40,7 +36,6 @@ var cameraY = 0;
 var platYadjust = 0;
 var platXadjust = 0;
 //stage indexes: [0]=X [1]=Y [2]=Width [3]=Height
-//var stages = [[0, 270, 500, 10], [0, 200, 500, 10]]
 var stage1 = [0, 270, 500, 10];
 var stage2 = [0, 200, 500, 10];
 
@@ -53,7 +48,7 @@ function debug() {
     }
 //If a key is pressed, the function keyDownHandler will find which key was pressed.
 function keyDownHandler(e) {
-    if (e.key === "Right" || e.key === "ArrowRight") {
+    if (e.key === "Right" || e.key === "ArrowRight") {  //Check if the Right Arrow key is pressed; Adjust rightPressed variable
         rightPressed = true;
     }
     else if (e.key === "Left" || e.key === "ArrowLeft") {
@@ -102,15 +97,15 @@ function collision() {
 	if (paddleX < canvas.width - paddleWidth) {
 		rightCollide = false;
 	}
-	
+
 	else {
 		rightCollide = true;
 	}
-	
+
 	if (paddleX > 0) {
 		leftCollide = false;
 	}
-	
+
 	else {
 		leftCollide = true;
 	}
@@ -126,6 +121,7 @@ function collision() {
 	if (paddleY < canvas.height - paddleHeight) {
 		downCollide = false;
 	}
+    
 	else if(paddleY < stage1[1] - paddleHeight) {
 		downCollide = false;
 	}
@@ -169,33 +165,23 @@ function draw() {
 
   if(rightPressed && rightCollide === false) {
 	  platXadjust -= 7;
-	  //stage1[0] -= 7;
 	  cameraX += 7;
-      //paddleX += 7;
   }
   else if(leftPressed && leftCollide === false) {
 	  platXadjust += 7;
-      //stage1[0] += 7;
 	  cameraX -= 7;
-	  //paddleX -= 7;
   }
   if(upPressed && upCollide === false) {
 	  platYadjust += 12;
-	  //stage1[1] += 12;
 	  cameraY -= 12;
-	  //paddleY -= 12;
   }
   else if(downPressed && downCollide === false) {
 	  platYadjust -= 7;
-      //stage1[1] -= 7;
 	  cameraY += 7;
-	  //paddleY += 7;
   }
   if(downCollide === false) {
 	  platYadjust -= 5;
-      //stage1[1] -= 5;
 	  cameraY += 5;
-	  //paddleY += 5;
   }
 
   camera();
@@ -203,8 +189,6 @@ function draw() {
   collision();
   platformCollision();
   camera();
-  x += dx;
-  y += dy;
   requestAnimationFrame(draw);
 }
 
